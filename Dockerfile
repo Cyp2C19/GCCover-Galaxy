@@ -23,5 +23,6 @@ ADD monitor_traffic.sh /usr/bin/monitor_traffic.sh
 RUN chmod 777 /usr/bin/monitor_traffic.sh
 
 COPY shiny-server.sh /usr/bin/shiny-server.sh
+RUN chmod 777 /usr/bin/shiny-server.sh
 
 CMD ["/usr/bin/shiny-server.sh"]
