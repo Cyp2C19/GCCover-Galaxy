@@ -3,6 +3,7 @@ library(plotly)
 library(Biostrings)
 library(seqinr)
 source("drawPlotly.R")
+load("data/gcCover.RData", envir=.GlobalEnv)
 
 # Define UI for app that draws a plot ----
 ui <- fluidPage(
@@ -34,20 +35,18 @@ ui <- fluidPage(
 
 # Define server logic required to draw a plot ----
 server <- function(input, output, session) {
-	seqString <- read.fasta("data/seq.fasta", seqonly=TRUE)
-	sequence <- DNAString(seqString[[1]])
-	covData <- scan("data/cov_file", integer(), sep =",", skip = 1)
 	# Drawing Chart. Call to "drawPlotly.R" script
 	output$plot <- renderPlotly({
-		drawChart(sequence, covData, input$range, input$chartType)
+		seqName <- paste(c(gsub("_", " ", seqName, fixed=TRUE), "(Window :", input$range, "bp)"), collapse = " ")
+		drawChart(sequence, covData, seqName, input$range, input$chartType)
 	})
 	# Downloadable csv of selected dataset ----
 	output$downloadData <- downloadHandler(
 		filename = function() {
-			paste("results", ".csv", sep = "")
+			paste(seqName, ".csv", sep = "")
 		},
 		content = function(file) {
-			dataSet <- getData(sequence, covData, input$range, input$chartType)
+			dataSet <- getDataForCsv(sequence, covData, input$range)
 			write.csv(dataSet, file, row.names = FALSE)
 		}
 	)
