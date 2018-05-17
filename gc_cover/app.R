@@ -35,11 +35,11 @@ ui <- fluidPage(
 
 # Define server logic required to draw a plot ----
 server <- function(input, output, session) {
-	sequence <- DNAString(seqString[[1]])
-	# Drawing Chart. Call to "drawPlotly.R" script
+	# Get Data and Draw Chart. Call to "drawPlotly.R" script
 	output$plot <- renderPlotly({
+		data <- getGcCov(seqString, covData, input$range)
 		seqName <- paste(c(gsub("_", " ", seqName, fixed=TRUE), "(Window :", input$range, "bp)"), collapse = " ")
-		drawChart(sequence, covData, seqName, input$range, input$chartType)
+		drawChart(data, seqName, input$range, input$chartType)
 	})
 	# Downloadable csv of selected dataset ----
 	output$downloadData <- downloadHandler(
@@ -47,7 +47,8 @@ server <- function(input, output, session) {
 			paste(seqName, ".csv", sep = "")
 		},
 		content = function(file) {
-			dataSet <- getDataForCsv(sequence, covData, input$range)
+			data <- getGcCov(seqString, covData, input$range)
+			dataSet <- getCsvContent(data, input$range)
 			write.csv(dataSet, file, row.names = FALSE)
 		}
 	)
