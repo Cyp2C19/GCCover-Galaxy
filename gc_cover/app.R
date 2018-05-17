@@ -35,6 +35,7 @@ ui <- fluidPage(
 
 # Define server logic required to draw a plot ----
 server <- function(input, output, session) {
+	sequence <- DNAString(seqString[[1]])
 	# Drawing Chart. Call to "drawPlotly.R" script
 	output$plot <- renderPlotly({
 		seqName <- paste(c(gsub("_", " ", seqName, fixed=TRUE), "(Window :", input$range, "bp)"), collapse = " ")
